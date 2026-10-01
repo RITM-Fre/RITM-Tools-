@@ -187,7 +187,7 @@ const TOOLS = [
     const sets = [['a-z', 'abcdefghijklmnopqrstuvwxyz'], ['A-Z', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'], ['0-9', '0123456789'], ['!@#', '!@#$%^&*()-_=+[]{};:,.?']];
     const [wl, l] = field(t('length'), { type: 'range', min: 4, max: 64, value: 16 }), lv = h('b', {}, nf(16));
     const cs = sets.map(([n], i) => chk(n, i < 3)), [wx, x] = chk(t('excl'));
-    const o = h('output', { class: 'res ltr' }), en = h('p', {}), e = errEl();
+    const o = h('output', { class: 'res ltr' }), en = h('p', { class: 'sub' }), e = errEl();
     const gen = () => {
       let pool = sets.filter((_, i) => cs[i][1].checked).map(s => s[1]).join('');
       if (x.checked) pool = pool.replace(/[0O1lI]/g, '');
@@ -205,13 +205,14 @@ const TOOLS = [
   }),
   T('strength', 'security', '🛡️', ['سنجش قدرت رمز', 'Password Strength'], ['بررسی لحظه‌ای با نوار رنگی', 'Live check with a colored bar'], b => {
     const [w, i] = field(t('password'), { type: 'text', class: 'ltr', autocomplete: 'off' });
-    const bar = h('i'), lab = h('p', { class: 'res' }), tips = h('ul');
+    const bar = h('i'), lab = h('p', { class: 'sub' }), tips = h('ul');
     const u = () => {
       const p = i.value; tips.replaceChildren();
       if (!p) { bar.style.width = '0'; lab.textContent = ''; return; }
       const c = (/[a-z]/.test(p) ? 26 : 0) + (/[A-Z]/.test(p) ? 26 : 0) + (/\d/.test(p) ? 10 : 0) + (/[^a-zA-Z\d]/.test(p) ? 32 : 0);
       const bits = p.length * Math.log2(c || 1), lv = bits < 28 ? 0 : bits < 50 ? 1 : bits < 70 ? 2 : 3;
-      bar.style.width = (lv + 1) * 25 + '%'; bar.style.background = ['#d64545', '#e5a21c', '#4aa3ff', '#1a9e5c'][lv];
+      bar.style.width = (lv + 1) * 25 + '%';
+      bar.style.background = ['linear-gradient(90deg,#d64545,#ff8a8a)', 'linear-gradient(90deg,#e5a21c,#ffce55)', 'linear-gradient(90deg,#4aa3ff,#22d3ee)', 'linear-gradient(90deg,#1a9e5c,#3ddc97)'][lv];
       lab.textContent = t(['weak', 'fair', 'good', 'strong'][lv]) + ' · ' + t('entropy') + ': ' + nf(bits, { maximumFractionDigits: 0 });
       [[p.length < 12, 'tip_len'], [!/[A-Z]/.test(p), 'tip_up'], [!/\d/.test(p), 'tip_num'], [!/[^a-zA-Z\d]/.test(p), 'tip_sym']].forEach(([f, k]) => f && tips.append(h('li', {}, t(k))));
     };
@@ -270,115 +271,4 @@ const TOOLS = [
     const run = () => {
       const m = u.value === 'm';
       ww.firstChild.textContent = t('weight') + (m ? ' (kg)' : ' (lb)'); wh.firstChild.textContent = t('height') + (m ? ' (cm)' : ' (in)');
-      const a = +w.value, c = +hh.value; e.textContent = ''; o.textContent = '';
-      if (!(a > 0 && c > 0)) { if (w.value || hh.value) e.textContent = t('err_num'); return; }
-      const v = m ? a / ((c / 100) ** 2) : 703 * a / (c ** 2);
-      o.textContent = nf(v, { maximumFractionDigits: 1 }) + ' — ' + t(v < 18.5 ? 'under' : v < 25 ? 'normal' : v < 30 ? 'over' : 'obese');
-    };
-    [u, w, hh].forEach(c => c.addEventListener('input', run)); run();
-    b.append(wu, ww, wh, e, o);
-  }),
-  T('dice', 'extra', '🎲', ['تاس و سکه', 'Dice & Coin'], ['پرتاب تاس و سکه', 'Roll a die or flip a coin'], b => {
-    const o = h('div', { class: 'big', role: 'status', 'aria-live': 'polite' }, '🎲');
-    const r = n => crypto.getRandomValues(new Uint32Array(1))[0] % n;
-    const show = s => { o.textContent = s; o.classList.remove('pop'); void o.offsetWidth; o.classList.add('pop'); };
-    b.append(h('div', { class: 'row' },
-      h('button', { class: 'btn', type: 'button', onclick: () => show('⚀⚁⚂⚃⚄⚅'[r(6)]) }, t('roll')),
-      h('button', { class: 'btn', type: 'button', onclick: () => show('🪙 ' + t(r(2) ? 'heads' : 'tails')) }, t('flip'))), o);
-  })
-];
-const CATS = ['text', 'security', 'everyday', 'unit', 'web', 'extra'];
-const PAGES = ['about', 'contact', 'privacy'];
-
-/* ---------- recent tools (last 5) ---------- */
-const recentIds = () => { try { const r = JSON.parse(store.get(K.recent)); return Array.isArray(r) ? r : []; } catch { return []; } };
-const addRecent = id => store.set(K.recent, JSON.stringify([id, ...recentIds().filter(x => x !== id)].slice(0, 5)));
-
-/* ---------- SEO: title, description, JSON-LD per tool and language ---------- */
-function seo(ti, de) {
-  document.title = ti;
-  $('meta[name=description]').content = de;
-  $('#ld').textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebApplication', name: ti, description: de, inLanguage: lang, applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any', offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' } });
-}
-
-/* ---------- views ---------- */
-const app = $('#app');
-const arrow = () => (lang === 'fa' ? '→ ' : '← ');
-const card = x => h('a', { class: 'card', href: '#/' + x.id }, h('span', { class: 'ic', 'aria-hidden': 'true' }, x.icon), h('b', {}, nm(x)), h('small', {}, ds(x)));
-
-function home() {
-  const q = h('input', { type: 'search', class: 'search', placeholder: t('search'), 'aria-label': t('search') }), list = h('div');
-  const draw = () => {
-    const s = q.value.trim().toLowerCase(); // live filter on name + description of the active language
-    const m = TOOLS.filter(x => (nm(x) + ' ' + ds(x)).toLowerCase().includes(s));
-    list.replaceChildren();
-    if (!m.length) { list.append(h('div', { class: 'empty' }, h('div', { class: 'big', 'aria-hidden': 'true' }, '🔍'), t('empty'))); return; }
-    const rc = s ? [] : recentIds().map(id => TOOLS.find(x => x.id === id)).filter(Boolean);
-    if (rc.length) list.append(h('h2', {}, t('recent')), h('div', { class: 'grid' }, ...rc.map(card)));
-    CATS.forEach(c => { const g = m.filter(x => x.cat === c); if (g.length) list.append(h('h2', {}, t('c_' + c)), h('div', { class: 'grid' }, ...g.map(card))); });
-  };
-  q.oninput = draw; draw();
-  app.append(h('section', { class: 'hero' }, h('h1', {}, 'RITM Tools'), h('p', {}, t('tagline')), q), list, h('p', { class: 'note' }, '🔒 ' + t('privacy_note')));
-  seo(t('title'), t('desc'));
-}
-function toolView(x) {
-  addRecent(x.id);
-  const box = h('section', { class: 'panel' });
-  app.append(h('a', { class: 'back', href: '#/' }, arrow() + t('back')), h('h1', {}, x.icon + ' ' + nm(x)), h('p', { class: 'sub' }, ds(x)), box, h('p', { class: 'note' }, '🔒 ' + t('privacy_note')));
-  x.init(box);
-  seo(nm(x) + ' | RITM Tools', ds(x));
-}
-function pageView(p) {
-  app.append(h('a', { class: 'back', href: '#/' }, arrow() + t('back')), h('h1', {}, t(p)), h('p', { class: 'sub' }, t(p + '_b')));
-  seo(t(p) + ' | RITM Tools', t(p + '_b'));
-}
-
-/* ---------- hash router: #/tool-id ---------- */
-function route() {
-  const id = location.hash.replace(/^#\/?/, '');
-  const tool = TOOLS.find(x => x.id === id);
-  app.replaceChildren();
-  if (tool) toolView(tool); else if (PAGES.includes(id)) pageView(id); else home();
-  window.scrollTo(0, 0);
-}
-
-/* ---------- chrome: dir, lang, fonts, header labels, footer ---------- */
-const dlg = $('#dlg');
-function askClear() {
-  dlg.replaceChildren(h('p', {}, t('clear_q')), h('div', { class: 'row' },
-    h('button', { class: 'btn', type: 'button', onclick: () => { Object.values(K).forEach(k => store.del(k)); dlg.close(); toast(t('cleared'), 'success'); route(); } }, t('clear')),
-    h('button', { class: 'btn sec', type: 'button', onclick: () => dlg.close() }, t('cancel'))));
-  dlg.showModal();
-}
-function chrome() {
-  const d = document.documentElement;
-  d.lang = lang; d.dir = lang === 'fa' ? 'rtl' : 'ltr';
-  document.querySelectorAll('[data-i]').forEach(e => { e.textContent = t(e.dataset.i); });
-  $('#langBtn').textContent = lang === 'fa' ? 'EN' : 'فا';
-  $('#langBtn').setAttribute('aria-label', 'Language / زبان');
-  $('#themeBtn').textContent = d.dataset.theme === 'dark' ? '☀️' : '🌙';
-  $('#themeBtn').setAttribute('aria-label', t('theme'));
-  $('#foot').replaceChildren(...PAGES.map(p => h('a', { href: '#/' + p }, t(p))), h('button', { type: 'button', onclick: askClear }, t('clear')), h('span', {}, '© RITM Tools'));
-}
-
-/* ---------- init ---------- */
-document.documentElement.dataset.theme = store.get(K.theme) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-$('#themeBtn').onclick = () => {
-  const d = document.documentElement; d.dataset.theme = d.dataset.theme === 'dark' ? 'light' : 'dark';
-  store.set(K.theme, d.dataset.theme); chrome();
-};
-$('#langBtn').onclick = () => { lang = lang === 'fa' ? 'en' : 'fa'; store.set(K.lang, lang); chrome(); route(); }; // instant, no reload
-
-const sb = $('#sitesBtn'), sm = $('#sitesMenu');
-const closeSites = () => { sm.hidden = true; sb.setAttribute('aria-expanded', 'false'); };
-sb.onclick = e => { e.stopPropagation(); sm.hidden = !sm.hidden; sb.setAttribute('aria-expanded', String(!sm.hidden)); };
-document.addEventListener('click', e => { if (!sm.contains(e.target)) closeSites(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSites(); });
-
-// Pointer-reactive card glow
-app.addEventListener('pointermove', e => {
-  const c = e.target.closest('.card');
-  if (c) { const r = c.getBoundingClientRect(); c.style.setProperty('--x', e.clientX - r.left + 'px'); c.style.setProperty('--y', e.clientY - r.top + 'px'); }
-});
-addEventListener('hashchange', route);
-chrome(); route();
+      const a
