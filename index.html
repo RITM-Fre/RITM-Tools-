@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>RITM Tools</title>
 <meta name="description" content="">
 <link rel="alternate" hreflang="fa" href="./">
@@ -10,13 +10,31 @@
 <link rel="alternate" hreflang="x-default" href="./">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script type="application/ld+json" id="ld">{}</script>
 </head>
 <body>
+
+<!-- Opening splash -->
+<div class="splash" id="splash" aria-hidden="true">
+  <div class="splash-inner">
+    <div class="splash-mark">◈</div>
+    <div class="splash-title">RITM&nbsp;Tools</div>
+    <div class="splash-bar"><span></span></div>
+  </div>
+</div>
+
+<!-- Animated 3D background -->
+<div class="aurora" aria-hidden="true">
+  <span></span><span></span><span></span>
+</div>
+
 <header class="hdr">
-  <a class="logo" href="#/">◈ RITM Tools</a>
+  <a class="logo" href="#/">
+    <span class="logo-mark" aria-hidden="true">◈</span>
+    <span class="logo-text">RITM Tools</span>
+  </a>
   <div class="bar">
     <!-- Sites dropdown: closes on outside click / Escape (see JavaScript.js) -->
     <div class="dd">
@@ -32,6 +50,7 @@
     <button class="ib" id="themeBtn" type="button"></button>
   </div>
 </header>
+
 <main id="app"></main>
 <footer id="foot"></footer>
 <div id="toast" role="status" aria-live="polite"></div>
