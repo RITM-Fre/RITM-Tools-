@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RITM Tools</title>
+<meta name="description" content="">
+<link rel="alternate" hreflang="fa" href="./">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="alternate" hreflang="x-default" href="./">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json" id="ld">{}</script>
+</head>
+<body>
+<header class="hdr">
+  <a class="logo" href="#/">◈ RITM Tools</a>
+  <div class="bar">
+    <!-- Sites dropdown: closes on outside click / Escape (see JavaScript.js) -->
+    <div class="dd">
+      <button class="ib" id="sitesBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="sitesMenu"><span data-i="sites"></span> ▾</button>
+      <ul id="sitesMenu" hidden>
+        <li><a href="https://ttr.ir/iamritm" target="_blank" rel="noopener noreferrer">ttr.ir/iamritm</a></li>
+        <li><a href="https://ttr.ir/youritm" target="_blank" rel="noopener noreferrer">ttr.ir/youritm</a></li>
+        <li><a href="https://ttr.ir/sampleritm" target="_blank" rel="noopener noreferrer">ttr.ir/sampleritm</a></li>
+        <li><a href="https://ttr.ir/ouuute" target="_blank" rel="noopener noreferrer">ttr.ir/ouuute</a></li>
+      </ul>
+    </div>
+    <button class="ib" id="langBtn" type="button"></button>
+    <button class="ib" id="themeBtn" type="button"></button>
+  </div>
+</header>
+<main id="app"></main>
+<footer id="foot"></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="dlg"></dialog>
+<script src="JavaScript.js"></script>
+</body>
+</html>
